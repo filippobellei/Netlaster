@@ -25,64 +25,64 @@ public class MainActivity : Activity
     {
         base.OnCreate(savedInstanceState);
 
-        var url = Intent.GetStringExtra(Intent.ExtraText);
-
-        if (!string.IsNullOrEmpty(url) || !url.Contains("youtube.com"))
+        try
         {
-            try
-            {
-                var parsedUrl = url.Split('?')[1];
-                var paramsCollection = HttpUtility.ParseQueryString(parsedUrl);
-                var videoId = paramsCollection["v"];
+            var url = Intent.GetStringExtra(Intent.ExtraText);
 
-                if (string.IsNullOrEmpty(videoId))
-                    throw new Exception("Link YouTube non valido");
+            if (string.IsNullOrEmpty(url) || !url.Contains("youtube.com"))
+                throw new Exception("Link non valido");
 
-                using var httpClient = new HttpClient();
-                var playerService = new PlayerService(httpClient);
+            var parsedUrl = url.Split('?')[1];
+            var paramsCollection = HttpUtility.ParseQueryString(parsedUrl);
+            var videoId = paramsCollection["v"];
 
-                Toast.MakeText(this, "Download iniziato", ToastLength.Short).Show();
+            if (string.IsNullOrEmpty(videoId) && url.Contains("youtube.com"))
+                throw new Exception("Link YouTube non valido");
 
-                var player = playerService
-                    .GetPlayerAsync(videoId)
-                    .GetAwaiter()
-                    .GetResult();
-                var audio = player.StreamingData.AdaptiveFormats
-                    .First(x=>x.AudioTrack.AudioIsDefault);
+            using var httpClient = new HttpClient();
+            var playerService = new PlayerService(httpClient);
 
-                var streamUrl = audio.Url;
-                var contentLength = Convert.ToInt64(audio.ContentLength);
+            Toast.MakeText(this, "Download iniziato", ToastLength.Short).Show();
 
-                using var stream = playerService
-                    .RetrieveContentStreamAsync(contentLength, streamUrl)
-                    .GetAwaiter()
-                    .GetResult();
+            var player = playerService
+                .GetPlayerAsync(videoId)
+                .GetAwaiter()
+                .GetResult();
+            var audio = player.StreamingData.AdaptiveFormats
+                .First(x => x.AudioTrack.AudioIsDefault);
 
-                var fileName = FileHelper.SanitizeFileName(player.VideoDetails.Title) + ".opus";
+            var streamUrl = audio.Url;
+            var contentLength = Convert.ToInt64(audio.ContentLength);
 
-                using var values = new ContentValues();
-                values.Put(MediaStore.IMediaColumns.DisplayName, fileName);
-                values.Put(MediaStore.IMediaColumns.MimeType, "audio/webm");
-                values.Put(MediaStore.IMediaColumns.RelativePath, Android.OS.Environment.DirectoryDownloads);
+            using var stream = playerService
+                .RetrieveContentStreamAsync(contentLength, streamUrl)
+                .GetAwaiter()
+                .GetResult();
 
-                using var uri = ApplicationContext.ContentResolver.Insert(
-                    MediaStore.Downloads.ExternalContentUri,
-                    values
-                );
+            var fileName = FileHelper.SanitizeFileName(player.VideoDetails.Title) + ".opus";
 
-                using var outputStream = ApplicationContext.ContentResolver.OpenOutputStream(uri);
+            using var values = new ContentValues();
+            values.Put(MediaStore.IMediaColumns.DisplayName, fileName);
+            values.Put(MediaStore.IMediaColumns.MimeType, "audio/webm");
+            values.Put(MediaStore.IMediaColumns.RelativePath, Android.OS.Environment.DirectoryDownloads);
 
-                stream.CopyToAsync(outputStream)
-                    .GetAwaiter()
-                    .GetResult();
+            using var uri = ApplicationContext.ContentResolver.Insert(
+                MediaStore.Downloads.ExternalContentUri,
+                values
+            );
 
-                Toast.MakeText(this, "Download completato", ToastLength.Long).Show();
-            }
-            catch (Exception ex)
-            {
-                Toast.MakeText(this, ex.ToString(), ToastLength.Long).Show();
-                Log.Error("Netlaster", ex.ToString());
-            }
+            using var outputStream = ApplicationContext.ContentResolver.OpenOutputStream(uri);
+
+            stream.CopyToAsync(outputStream)
+                .GetAwaiter()
+                .GetResult();
+
+            Toast.MakeText(this, "Download completato", ToastLength.Long).Show();
+        }
+        catch (Exception ex)
+        {
+            Toast.MakeText(this, ex.Message, ToastLength.Long).Show();
+            Log.Error("Netlaster", ex.ToString());
         }
 
         Finish();
