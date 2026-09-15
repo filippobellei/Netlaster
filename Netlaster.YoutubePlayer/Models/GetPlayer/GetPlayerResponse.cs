@@ -1,4 +1,4 @@
-namespace Netlaster.Models.GetPlayer;
+namespace Netlaster.YoutubePlayer.Models.GetPlayer;
 
 public class GetPlayerResponse
 {
@@ -29,7 +29,7 @@ public class AdaptiveFormats
     public required string MimeType { get; set; }
     public required int Bitrate { get; set; }
     public required string ContentLength { get; set; }
-    public AudioTrack AudioTrack { get; set; }
+    public AudioTrack? AudioTrack { get; set; }
 }
 
 public class AudioTrack

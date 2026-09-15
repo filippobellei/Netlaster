@@ -1,4 +1,4 @@
-namespace Netlaster.Helpers;
+namespace Netlaster.Application.Helpers;
 
 public static class FileHelper
 {

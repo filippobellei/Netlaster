@@ -1,10 +1,10 @@
 using System.Net.Http.Json;
 using System.Text.Json;
 using System.Text.Json.Nodes;
-using Netlaster.Models.GetPlayer;
-using Netlaster.Serialization;
+using Netlaster.YoutubePlayer.Models.GetPlayer;
+using Netlaster.YoutubePlayer.Serialization;
 
-namespace Netlaster.Services;
+namespace Netlaster.YoutubePlayer;
 
 public class PlayerService(HttpClient _httpClient)
 {
@@ -12,7 +12,6 @@ public class PlayerService(HttpClient _httpClient)
     private const string PLAYER_URL = "https://www.youtube.com/youtubei/v1/player";
     private const string CLIENT_NAME = "VISIONOS";
     private const string CLIENT_VERSION = "1.02";
-    private const string AUDIO_WEBM_CODEC = "audio/webm";
     private const int CHUNKSIZE = 1_000_000;
 
     private async Task<string> ResolveVisitorDataAsync(CancellationToken cancellationToken = default)
@@ -86,10 +85,7 @@ public class PlayerService(HttpClient _httpClient)
         if (string.Equals(playabilityStatus, "error", StringComparison.OrdinalIgnoreCase) || details is null)
             throw new Exception($"Video '{videoId}' is not available");
 
-        responseContent!.StreamingData.AdaptiveFormats = responseContent.StreamingData.AdaptiveFormats
-            .Where(x => x.MimeType.StartsWith(AUDIO_WEBM_CODEC));
-
-        return responseContent;
+        return responseContent!;
     }
 
     public async Task<Stream> RetrieveContentStreamAsync(

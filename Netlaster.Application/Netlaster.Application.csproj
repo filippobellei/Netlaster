@@ -1,4 +1,5 @@
 <Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
     <TargetFramework>net10.0-android</TargetFramework>
     <RuntimeIdentifier>android-arm64</RuntimeIdentifier>
@@ -9,4 +10,9 @@
     <ApplicationId>com.netlaster</ApplicationId>
     <ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
   </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Netlaster.YoutubePlayer\Netlaster.YoutubePlayer.csproj" />
+  </ItemGroup>
+  
 </Project>

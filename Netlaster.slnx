@@ -1,5 +1,5 @@
 <Solution>
-  <Folder Name="/src/">
-    <Project Path="src/Netlaster.csproj" />
-  </Folder>
+  <Project Path="Netlaster.Application/Netlaster.Application.csproj" />
+  <Project Path="Netlaster.CLI.Test/Netlaster.CLI.Test.csproj" />
+  <Project Path="Netlaster.YoutubePlayer/Netlaster.YoutubePlayer.csproj" />
 </Solution>

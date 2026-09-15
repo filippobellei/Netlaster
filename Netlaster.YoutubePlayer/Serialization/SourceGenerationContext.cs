@@ -1,7 +1,7 @@
 using System.Text.Json.Serialization;
-using Netlaster.Models.GetPlayer;
+using Netlaster.YoutubePlayer.Models.GetPlayer;
 
-namespace Netlaster.Serialization;
+namespace Netlaster.YoutubePlayer.Serialization;
 
 [JsonSourceGenerationOptions(PropertyNamingPolicy = JsonKnownNamingPolicy.CamelCase)]
 [JsonSerializable(typeof(GetPlayerRequest))]

@@ -1,4 +1,4 @@
-namespace Netlaster.Models.GetPlayer;
+namespace Netlaster.YoutubePlayer.Models.GetPlayer;
 
 public class GetPlayerRequest
 {

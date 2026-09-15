@@ -3,10 +3,10 @@ using System.Web;
 using Android.Content;
 using Android.Provider;
 using Android.Util;
-using Netlaster.Helpers;
-using Netlaster.Services;
+using Netlaster.Application.Helpers;
+using Netlaster.YoutubePlayer;
 
-namespace Netlaster;
+namespace Netlaster.Application;
 
 [Activity(
     Exported = true,
@@ -48,8 +48,10 @@ public class MainActivity : Activity
                 .GetPlayerAsync(videoId)
                 .GetAwaiter()
                 .GetResult();
-            var audio = player.StreamingData.AdaptiveFormats
-                .First(x => x.AudioTrack.AudioIsDefault);
+            var audio = player.StreamingData.AdaptiveFormats.First(x =>
+                x.MimeType.StartsWith("audio/webm")
+                && (x.AudioTrack is null || x.AudioTrack.AudioIsDefault)
+            );
 
             var streamUrl = audio.Url;
             var contentLength = Convert.ToInt64(audio.ContentLength);
